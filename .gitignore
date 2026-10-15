@@ -1,0 +1,20 @@
+# Source material (processed copies live in assets/)
+Stock images/
+style 3/
+image.png
+*.csv
+
+# Build scratch: downloads, previews and screenshots
+tools/online/
+tools/*.png
+tools/*.jpg
+tools/patch*.py
+/*.png
+/*.jpg
+__pycache__/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
