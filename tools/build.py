@@ -508,18 +508,6 @@ def header(p, active, book="#book"):
     services_open = " open" if active not in ("home", "") else ""
     return f"""<body>
 <a class="skip-link" href="#main">Skip to content</a>
-<div class="topbar">
-  <div class="container">
-    <div class="topbar__items">
-      <span class="topbar__item">{icon("pin")}Serving {BUSINESS['area_label']}</span>
-      <span class="topbar__item">{icon("shield")}Background-checked team</span>
-    </div>
-    <div class="topbar__items">
-      <span class="topbar__item">{icon("clock")}{BUSINESS['hours']}</span>
-      <a class="topbar__item" href="mailto:{BUSINESS['email']}">{icon("mail")}{BUSINESS['email']}</a>
-    </div>
-  </div>
-</div>
 <header class="site-header" id="top">
   <div class="container">
     <a class="brand" href="{p}" aria-label="{escape(BUSINESS['name'])} home">
@@ -533,13 +521,11 @@ def header(p, active, book="#book"):
 {drop}
         </div>
       </div>
-      <a class="nav__link" href="{p}#plans">Plans</a>
       <a class="nav__link" href="{p}#about">About</a>
       <a class="nav__link" href="{p}#reviews">Reviews</a>
       <a class="nav__link" href="{book}">Contact</a>
     </nav>
     <div class="header__actions">
-      <a class="header__phone" href="tel:{BUSINESS['phone_href']}"><span class="ico">{icon("phone")}</span><span><small>Call us</small>{BUSINESS['phone']}</span></a>
       <a class="btn btn--primary header__cta" href="{book}">Book Now</a>
       <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">{icon("menu", "ico-open")}{icon("x", "ico-close")}</button>
     </div>
@@ -553,7 +539,6 @@ def header(p, active, book="#book"):
 {mob}
     </ul>
   </details>
-  <a href="{p}#plans">Recurring Plans</a>
   <a href="{p}#about">About</a>
   <a href="{p}#reviews">Reviews</a>
   <a href="{p}#areas">Service Areas</a>
@@ -586,7 +571,7 @@ def footer(p, book="#book"):
         <h3>Company</h3>
         <ul>
           <li><a href="{p}#about">About Us</a></li>
-          <li><a href="{p}#plans">Recurring Plans</a></li>
+          <li><a href="{p}services/recurring-cleaning/">Recurring Plans</a></li>
           <li><a href="{p}#reviews">Reviews</a></li>
           <li><a href="{p}#areas">Service Areas</a></li>
           <li><a href="{p}#faq">FAQ</a></li>
@@ -643,20 +628,6 @@ def booking_section(eyebrow, heading, lead, soft=True):
     </div>
   </div>
 </section>"""
-
-
-def hero_card():
-    return f"""<div class="quote-card hero-card">
-    <h2>Book your clean online</h2>
-    <p>Choose your service, pick a date and get instant pricing in just a few minutes.</p>
-    <ul class="hero-card__steps">
-      <li><span>1</span><div><strong>Choose your service</strong>Standard, deep, move-out and more</div></li>
-      <li><span>2</span><div><strong>Pick a date and time</strong>Flexible scheduling that fits your week</div></li>
-      <li><span>3</span><div><strong>Relax, we handle the rest</strong>A background-checked team arrives on time</div></li>
-    </ul>
-    <a class="btn btn--primary btn--block" href="#book">Book Now {icon('arrow')}</a>
-    <a class="hero-card__call" href="tel:{BUSINESS['phone_href']}">{icon('phone')}Or call {BUSINESS['phone']}</a>
-  </div>"""
 
 
 def faq_block(items):
@@ -717,17 +688,21 @@ def review_card(r):
 
 
 # --------------------------------------------------------------------------- home
+HOME_REVIEWS = [REVIEWS[0], REVIEWS[2], REVIEWS[3]]
+
+
 def build_home():
     p = ""
-    cards = "\n".join(
-        f"""<a class="service-card" href="services/{s['slug']}/">
-        <div class="service-card__media"><img src="assets/img/{SERVICE_CARD_IMG[s['slug']]}.webp" alt="{escape(s['name'])} by {escape(BUSINESS['name'])}" width="800" height="600" loading="lazy"><span class="service-card__num">{i:02d}</span></div>
-        <div class="service-card__body"><h3>{escape(s['name'])}</h3><p>{escape(s['card'])}</p><span class="text-link">View service {icon('arrow')}</span></div>
+    tiles = "\n".join(
+        f"""<a class="tile" href="services/{s['slug']}/">
+        <div class="tile__media"><img src="assets/img/{SERVICE_CARD_IMG[s['slug']]}.webp" alt="{escape(s['name'])} by {escape(BUSINESS['name'])}" width="800" height="600" loading="lazy"></div>
+        <h3>{escape(s['name'])} {icon('arrow')}</h3>
+        <p>{escape(s['nav'])}</p>
       </a>"""
-        for i, s in enumerate(SERVICES, 1)
+        for s in SERVICES
     )
-    areas = "\n".join(f"<li>{icon('pin')}{a}</li>" for a in AREAS)
-    reviews = "\n".join(review_card(r) for r in REVIEWS)
+    areas = "\n".join(f"<li>{a}</li>" for a in AREAS)
+    reviews = "\n".join(review_card(r) for r in HOME_REVIEWS)
     map_q = f"{BUSINESS['city']}, {BUSINESS['region']}".replace(" ", "+")
     schema = [
         business_schema(),
@@ -739,38 +714,35 @@ def build_home():
         title=f"{BUSINESS['name']} | House and Commercial Cleaning in Salt Lake City, UT",
         desc="H&G Cleaning Co. provides reliable residential and commercial cleaning in Salt Lake City and surrounding areas. Background-checked, 5-star rated and locally owned. Book online today.",
         path="/",
-        image="home-hero.webp",
+        image="bright-clean-living-room.webp",
         keywords="cleaning service Salt Lake City, house cleaning Salt Lake City, maid service Salt Lake City, deep cleaning Utah, move out cleaning Salt Lake City, commercial cleaning Salt Lake City, Airbnb cleaning Salt Lake City, recurring house cleaning",
         schema=schema,
     ) + header(p, "home") + f"""<main id="main">
 
-<section class="hero">
-  <div class="hero__bg"><img src="assets/img/home-hero.webp" alt="" width="2000" height="1360" fetchpriority="high"></div>
-  <div class="container">
-    <div class="hero__content">
-      <span class="eyebrow eyebrow--light">{BUSINESS['tagline']} in {BUSINESS['city']}</span>
-      <h1>Professional cleaning for homes and businesses you can <em>count on.</em></h1>
-      <p class="lead">Reliable, high-quality residential and commercial cleaning designed to make life easier. A dependable, background-checked team serving {BUSINESS['city']} and the surrounding areas.</p>
-      <div class="hero__actions">
-        <a class="btn btn--primary" href="#book">Book Now {icon('arrow')}</a>
-        <a class="btn btn--ghost-light" href="tel:{BUSINESS['phone_href']}">{icon('phone')}{BUSINESS['phone']}</a>
-      </div>
-      <ul class="hero__trust">
-        <li>{icon('shield')}Background-checked</li>
-        <li>{icon('star-outline')}5-star rated</li>
-        <li>{icon('home')}Locally owned</li>
-      </ul>
+<section class="hero-split">
+  <div class="hero-split__content">
+    <span class="eyebrow">{BUSINESS['tagline']} in {BUSINESS['city']}</span>
+    <h1>Professional cleaning you can count on.</h1>
+    <p class="lead">Reliable, detail-focused cleaning for homes and businesses, from a background-checked and locally owned team.</p>
+    <div class="hero-split__actions">
+      <a class="btn btn--primary" href="#book">Book Now {icon('arrow')}</a>
+      <a class="btn btn--outline" href="#services">View Services</a>
     </div>
-    {hero_card()}
+    <ul class="hero-split__trust">
+      <li>{stars()}<span>5-star rated</span></li>
+      <li>{icon('shield')}<span>Background-checked</span></li>
+      <li>{icon('home')}<span>Locally owned</span></li>
+    </ul>
   </div>
-</section>
-
-<section class="trust-strip" aria-label="Why clients trust us">
-  <div class="container">
-    <div class="trust-item"><span class="trust-item__icon">{icon('shield')}</span><div><strong>Background-Checked</strong><span>Every cleaner, every time</span></div></div>
-    <div class="trust-item"><span class="trust-item__icon">{icon('star-outline')}</span><div><strong>5-Star Rated</strong><span>Trusted by local clients</span></div></div>
-    <div class="trust-item"><span class="trust-item__icon">{icon('home')}</span><div><strong>Locally Owned</strong><span>Proudly serving Salt Lake</span></div></div>
-    <div class="trust-item"><span class="trust-item__icon">{icon('calendar')}</span><div><strong>Flexible Scheduling</strong><span>Weekly, bi-weekly, monthly</span></div></div>
+  <div class="hero-split__media">
+    <img src="assets/img/bright-clean-living-room.webp" alt="Bright, spotless living room after a professional cleaning" width="1400" height="933" fetchpriority="high">
+    <div class="book-panel">
+      <span class="book-panel__label">Online booking</span>
+      <h2>Book your clean in minutes</h2>
+      <p>Choose your service, pick a date and see your price instantly.</p>
+      <a class="btn btn--primary btn--block" href="#book">Book Now {icon('arrow')}</a>
+      <a class="book-panel__call" href="tel:{BUSINESS['phone_href']}">or call {BUSINESS['phone']}</a>
+    </div>
   </div>
 </section>
 
@@ -778,11 +750,11 @@ def build_home():
   <div class="container">
     <div class="section-head section-head--center">
       <span class="eyebrow">Our Services</span>
-      <h2>Cleaning services built around your space</h2>
-      <p>From routine upkeep to detailed deep cleans and commercial care, every service is delivered with the same attention to detail.</p>
+      <h2>How we can help</h2>
+      <p>Residential and commercial cleaning, delivered with the same care and attention to detail.</p>
     </div>
-    <div class="services-grid">
-{cards}
+    <div class="tiles">
+{tiles}
     </div>
   </div>
 </section>
@@ -790,86 +762,42 @@ def build_home():
 <section class="section section--soft" id="about">
   <div class="container split">
     <div class="split__media">
-      <div class="media-stack">
-        <div class="media-stack__main"><img src="assets/img/team-cleaning-living-room.webp" alt="H&amp;G Cleaning Co. team cleaning a bright living room" width="1024" height="574" loading="lazy"></div>
-        <div class="media-stack__inset"><img src="assets/img/gloved-hand-spraying-surface.webp" alt="Gloved hand spraying a surface with cleaner" width="1000" height="666" loading="lazy"></div>
-        <div class="media-stack__badge"><div><strong>5.0</strong><span>Client rating</span></div>{stars()}</div>
-      </div>
+      <div class="about-media"><img src="assets/img/team-cleaning-living-room.webp" alt="H&amp;G Cleaning Co. team cleaning a bright living room" width="1024" height="574" loading="lazy"></div>
     </div>
     <div class="split__content">
-      <span class="eyebrow">About {escape(BUSINESS['name'])}</span>
+      <span class="eyebrow">About Us</span>
       <h2>A dependable team you can trust in your space</h2>
-      <p class="lead">We provide reliable, high-quality residential and commercial cleaning services designed to make life easier.</p>
-      <p>Our clients are busy homeowners, families, professionals and businesses who value convenience and want a cleaning team they can rely on, visit after visit. We show up on time, communicate clearly and take real pride in the details.</p>
-      <ul class="check-list">
-        <li><span class="check-list__icon">{icon('check')}</span><div><strong>Background-checked professionals</strong><span class="d">Peace of mind every time we enter your home or business.</span></div></li>
-        <li><span class="check-list__icon">{icon('check')}</span><div><strong>Consistent, detailed results</strong><span class="d">Clear checklists so nothing gets missed.</span></div></li>
-        <li><span class="check-list__icon">{icon('check')}</span><div><strong>Simple booking and clear pricing</strong><span class="d">Book online in minutes with upfront pricing.</span></div></li>
+      <p>We serve busy homeowners, families, professionals and businesses who want a cleaning team they can rely on. We show up on time, communicate clearly and take pride in the details.</p>
+      <ul class="simple-checks">
+        <li>{icon('check')}Background-checked professionals</li>
+        <li>{icon('check')}Consistent, checklist-driven results</li>
+        <li>{icon('check')}Simple online booking with upfront pricing</li>
       </ul>
-      <a class="btn btn--navy" href="#book">Book Your Clean {icon('arrow')}</a>
+      <a class="text-link" href="#book">Book your clean {icon('arrow')}</a>
     </div>
   </div>
 </section>
 
-<section class="section" id="process">
+<section class="section">
   <div class="container">
     <div class="section-head section-head--center">
       <span class="eyebrow">How It Works</span>
-      <h2>A spotless space in three simple steps</h2>
-      <p>Booking with us is quick and easy, so you can get back to what matters.</p>
+      <h2>Three simple steps</h2>
     </div>
-    <div class="steps">
-      <div class="step"><div class="step__num">STEP 01</div><div class="step__icon">{icon('message')}</div><h3>Book online</h3><p>Choose your service and tell us about your space. You will see clear, upfront pricing right away.</p></div>
-      <div class="step"><div class="step__num">STEP 02</div><div class="step__icon">{icon('calendar')}</div><h3>Pick your schedule</h3><p>Choose a one-time clean or a weekly, bi-weekly or monthly plan that fits your routine.</p></div>
-      <div class="step"><div class="step__num">STEP 03</div><div class="step__icon">{icon('smile')}</div><h3>Enjoy a clean space</h3><p>Our background-checked team arrives on time and leaves your space spotless.</p></div>
-    </div>
-  </div>
-</section>
-
-<section class="section section--navy" id="plans">
-  <div class="container">
-    <div class="section-head section-head--center">
-      <span class="eyebrow eyebrow--light">Recurring Plans</span>
-      <h2>Stay clean without the scheduling</h2>
-      <p>Choose the frequency that fits your life. Recurring clients enjoy priority scheduling and the same familiar team.</p>
-    </div>
-    <div class="plans">
-      <div class="plan">
-        <div class="plan__freq">Every week</div>
-        <h3>Weekly</h3>
-        <p>For busy households, families with kids and pet owners who want their home spotless all the time.</p>
-        <ul><li>{icon('check')}Highest level of upkeep</li><li>{icon('check')}Same team whenever possible</li><li>{icon('check')}Priority scheduling</li></ul>
-        <a class="btn btn--ghost-light btn--block" href="#book">Book Weekly</a>
-      </div>
-      <div class="plan plan--featured">
-        <span class="plan__tag">Most Popular</span>
-        <div class="plan__freq">Every two weeks</div>
-        <h3>Bi-Weekly</h3>
-        <p>The perfect balance of value and consistency. Your home never falls behind.</p>
-        <ul><li>{icon('check')}Our most booked plan</li><li>{icon('check')}Same team whenever possible</li><li>{icon('check')}Flexible rescheduling</li></ul>
-        <a class="btn btn--primary btn--block" href="#book">Book Bi-Weekly</a>
-      </div>
-      <div class="plan">
-        <div class="plan__freq">Every month</div>
-        <h3>Monthly</h3>
-        <p>A reliable monthly reset that keeps buildup away and your home feeling fresh.</p>
-        <ul><li>{icon('check')}Great for smaller homes</li><li>{icon('check')}Consistent monthly care</li><li>{icon('check')}Easy to upgrade anytime</li></ul>
-        <a class="btn btn--ghost-light btn--block" href="#book">Book Monthly</a>
-      </div>
-    </div>
-    <p class="plans-note">Every home is different, so we quote each plan based on your space. Book online to see your personalized price instantly.</p>
+    <ol class="steps-inline">
+      <li><span class="steps-inline__num">1</span><h3>Book online</h3><p>Choose your service and see your price right away.</p></li>
+      <li><span class="steps-inline__num">2</span><h3>We clean</h3><p>Our team arrives on time with everything needed.</p></li>
+      <li><span class="steps-inline__num">3</span><h3>You relax</h3><p>Come home to a fresh, spotless space.</p></li>
+    </ol>
   </div>
 </section>
 
 <section class="section section--soft" id="reviews">
   <div class="container">
-    <div class="reviews-head">
-      <div class="section-head">
-        <span class="eyebrow">Client Reviews</span>
-        <h2>What our clients are saying</h2>
-        <p>Real feedback from homeowners and families who trust us with their spaces.</p>
-      </div>
-      <div class="rating-summary"><strong>5.0</strong><div>{stars()}<span>Average client rating</span></div></div>
+    <div class="section-head section-head--center">
+      <span class="eyebrow">Client Reviews</span>
+      <h2>Loved by our clients</h2>
+      <p class="rating-line">{stars()}<strong>5.0</strong> average rating</p>
     </div>
     <div class="reviews">
 {reviews}
@@ -881,12 +809,11 @@ def build_home():
   <div class="container areas">
     <div>
       <span class="eyebrow eyebrow--light">Service Areas</span>
-      <h2 style="font-size:clamp(30px,4vw,44px);margin-bottom:18px">Proudly serving Salt Lake City and surrounding areas</h2>
-      <p>We are a locally owned team cleaning homes and businesses throughout the Salt Lake Valley. Do not see your city listed? Reach out and we will let you know if we can help.</p>
-      <ul class="areas__list">
+      <h2>Serving Salt Lake City and nearby</h2>
+      <p>A locally owned team cleaning homes and businesses across the Salt Lake Valley. Not sure if we cover your area? Just ask.</p>
+      <ul class="area-chips">
 {areas}
       </ul>
-      <a class="btn btn--primary" href="#book">Check Availability {icon('arrow')}</a>
     </div>
     <div class="areas__map">
       <iframe title="Map of the {BUSINESS['city']} service area" src="https://www.google.com/maps?q={map_q}&amp;z=10&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
@@ -898,8 +825,7 @@ def build_home():
   <div class="container">
     <div class="section-head section-head--center">
       <span class="eyebrow">FAQ</span>
-      <h2>Frequently asked questions</h2>
-      <p>Everything you need to know before booking. Still have questions? Give us a call.</p>
+      <h2>Common questions</h2>
     </div>
     <div class="faq">
 {faq_block(HOME_FAQS)}
