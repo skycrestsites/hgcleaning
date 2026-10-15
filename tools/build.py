@@ -690,19 +690,38 @@ def review_card(r):
 # --------------------------------------------------------------------------- home
 HOME_REVIEWS = [REVIEWS[0], REVIEWS[2], REVIEWS[3]]
 
+WHY = [
+    ("why-team-mopping", "Cleaner mopping a bright, modern living space", "Trusted professionals", "Every cleaner is background-checked, trained and treats your space with care."),
+    ("why-detail-wiping", "Gloved hand wiping a surface to a spotless finish", "Attention to detail", "Clear checklists and a detail-first approach, so nothing gets overlooked."),
+    ("recurring-made-bedroom", "Neatly made bed in a freshly cleaned bedroom", "Flexible scheduling", "One-time, weekly, bi-weekly or monthly visits that fit around your life."),
+]
+
 
 def build_home():
     p = ""
     tiles = "\n".join(
         f"""<a class="tile" href="services/{s['slug']}/">
         <div class="tile__media"><img src="assets/img/{SERVICE_CARD_IMG[s['slug']]}.webp" alt="{escape(s['name'])} by {escape(BUSINESS['name'])}" width="800" height="600" loading="lazy"></div>
-        <h3>{escape(s['name'])} {icon('arrow')}</h3>
-        <p>{escape(s['nav'])}</p>
+        <div class="tile__body"><h3>{escape(s['name'])}</h3><p>{escape(s['nav'])}</p><span class="text-link">Learn more {icon('arrow')}</span></div>
       </a>"""
         for s in SERVICES
     )
+    why = "\n".join(
+        f"""<article class="why-card">
+        <div class="why-card__media"><img src="assets/img/{img}.webp" alt="{escape(alt)}" width="900" height="675" loading="lazy"></div>
+        <h3>{escape(t)}</h3><p>{escape(d)}</p>
+      </article>"""
+        for img, alt, t, d in WHY
+    )
     areas = "\n".join(f"<li>{a}</li>" for a in AREAS)
-    reviews = "\n".join(review_card(r) for r in HOME_REVIEWS)
+    reviews = "\n".join(
+        f"""<figure class="quote">
+          {stars()}
+          <blockquote>&ldquo;{escape(t)}&rdquo;</blockquote>
+          <figcaption><span class="review__avatar">{initials(n)}</span><span><strong>{escape(n)}</strong>{escape(label)}</span></figcaption>
+        </figure>"""
+        for n, label, t in HOME_REVIEWS
+    )
     map_q = f"{BUSINESS['city']}, {BUSINESS['region']}".replace(" ", "+")
     schema = [
         business_schema(),
@@ -714,34 +733,38 @@ def build_home():
         title=f"{BUSINESS['name']} | House and Commercial Cleaning in Salt Lake City, UT",
         desc="H&G Cleaning Co. provides reliable residential and commercial cleaning in Salt Lake City and surrounding areas. Background-checked, 5-star rated and locally owned. Book online today.",
         path="/",
-        image="bright-clean-living-room.webp",
+        image="hero-cleaner-window.webp",
         keywords="cleaning service Salt Lake City, house cleaning Salt Lake City, maid service Salt Lake City, deep cleaning Utah, move out cleaning Salt Lake City, commercial cleaning Salt Lake City, Airbnb cleaning Salt Lake City, recurring house cleaning",
         schema=schema,
     ) + header(p, "home") + f"""<main id="main">
 
-<section class="hero-split">
-  <div class="hero-split__content">
-    <span class="eyebrow">{BUSINESS['tagline']} in {BUSINESS['city']}</span>
-    <h1>Professional cleaning you can count on.</h1>
-    <p class="lead">Reliable, detail-focused cleaning for homes and businesses, from a background-checked and locally owned team.</p>
-    <div class="hero-split__actions">
-      <a class="btn btn--primary" href="#book">Book Now {icon('arrow')}</a>
-      <a class="btn btn--outline" href="#services">View Services</a>
+<section class="hero">
+  <div class="container hero__grid">
+    <div class="hero__content">
+      <span class="eyebrow">{BUSINESS['tagline']} in {BUSINESS['city']}</span>
+      <h1>Professional cleaning you can <span>count on.</span></h1>
+      <p class="lead">Reliable, detail-focused cleaning for homes and businesses across the Salt Lake Valley, from a background-checked and locally owned team.</p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#book">Book Now {icon('arrow')}</a>
+        <a class="btn btn--outline" href="tel:{BUSINESS['phone_href']}">{icon('phone')}{BUSINESS['phone']}</a>
+      </div>
+      <div class="hero__proof">
+        <div class="hero__rating"><strong>5.0</strong><div>{stars()}<span>Rated by local clients</span></div></div>
+        <ul>
+          <li>{icon('shield')}Background-checked</li>
+          <li>{icon('home')}Locally owned</li>
+        </ul>
+      </div>
     </div>
-    <ul class="hero-split__trust">
-      <li>{stars()}<span>5-star rated</span></li>
-      <li>{icon('shield')}<span>Background-checked</span></li>
-      <li>{icon('home')}<span>Locally owned</span></li>
-    </ul>
-  </div>
-  <div class="hero-split__media">
-    <img src="assets/img/bright-clean-living-room.webp" alt="Bright, spotless living room after a professional cleaning" width="1400" height="933" fetchpriority="high">
-    <div class="book-panel">
-      <span class="book-panel__label">Online booking</span>
-      <h2>Book your clean in minutes</h2>
-      <p>Choose your service, pick a date and see your price instantly.</p>
-      <a class="btn btn--primary btn--block" href="#book">Book Now {icon('arrow')}</a>
-      <a class="book-panel__call" href="tel:{BUSINESS['phone_href']}">or call {BUSINESS['phone']}</a>
+    <div class="hero__mosaic">
+      <div class="hero__tall"><img src="assets/img/hero-cleaner-window.webp" alt="Professional cleaner wiping a large window in a bright modern home" width="1000" height="1500" fetchpriority="high"></div>
+      <div class="hero__small"><img src="assets/img/hero-detail-mirror.webp" alt="Gloved hand polishing a mirror to a streak-free shine" width="900" height="600"></div>
+      <div class="hero__book">
+        <span class="hero__book-label">Online booking</span>
+        <h2>Book your clean in minutes</h2>
+        <p>Pick a service and date, and see your price instantly.</p>
+        <a class="btn btn--primary btn--block" href="#book">Book Now {icon('arrow')}</a>
+      </div>
     </div>
   </div>
 </section>
@@ -750,8 +773,8 @@ def build_home():
   <div class="container">
     <div class="section-head section-head--center">
       <span class="eyebrow">Our Services</span>
-      <h2>How we can help</h2>
-      <p>Residential and commercial cleaning, delivered with the same care and attention to detail.</p>
+      <h2>Cleaning services for every space</h2>
+      <p>From routine upkeep to move-outs and commercial care, every service gets the same attention to detail.</p>
     </div>
     <div class="tiles">
 {tiles}
@@ -762,23 +785,42 @@ def build_home():
 <section class="section section--soft" id="about">
   <div class="container split">
     <div class="split__media">
-      <div class="about-media"><img src="assets/img/team-cleaning-living-room.webp" alt="H&amp;G Cleaning Co. team cleaning a bright living room" width="1024" height="574" loading="lazy"></div>
+      <div class="about-collage">
+        <div class="about-collage__main"><img src="assets/img/about-team.webp" alt="H&amp;G Cleaning Co. team ready with professional cleaning equipment" width="1400" height="915" loading="lazy"></div>
+        <div class="about-collage__inset"><img src="assets/img/about-detail-sink.webp" alt="Sink and faucet being sprayed and polished" width="800" height="534" loading="lazy"></div>
+      </div>
     </div>
     <div class="split__content">
       <span class="eyebrow">About Us</span>
       <h2>A dependable team you can trust in your space</h2>
-      <p>We serve busy homeowners, families, professionals and businesses who want a cleaning team they can rely on. We show up on time, communicate clearly and take pride in the details.</p>
+      <p>We serve busy homeowners, families, professionals and businesses who want a cleaning team they can rely on. We show up on time, communicate clearly and take real pride in the details.</p>
       <ul class="simple-checks">
         <li>{icon('check')}Background-checked professionals</li>
         <li>{icon('check')}Consistent, checklist-driven results</li>
         <li>{icon('check')}Simple online booking with upfront pricing</li>
       </ul>
-      <a class="text-link" href="#book">Book your clean {icon('arrow')}</a>
+      <div class="stats">
+        <div><strong>5.0</strong><span>Client rating</span></div>
+        <div><strong>8</strong><span>Cleaning services</span></div>
+        <div><strong>100%</strong><span>Background-checked</span></div>
+      </div>
     </div>
   </div>
 </section>
 
 <section class="section">
+  <div class="container">
+    <div class="section-head section-head--center">
+      <span class="eyebrow">Why H&amp;G</span>
+      <h2>The difference is in the details</h2>
+    </div>
+    <div class="why">
+{why}
+    </div>
+  </div>
+</section>
+
+<section class="section section--soft">
   <div class="container">
     <div class="section-head section-head--center">
       <span class="eyebrow">How It Works</span>
@@ -792,15 +834,18 @@ def build_home():
   </div>
 </section>
 
-<section class="section section--soft" id="reviews">
-  <div class="container">
-    <div class="section-head section-head--center">
-      <span class="eyebrow">Client Reviews</span>
-      <h2>Loved by our clients</h2>
-      <p class="rating-line">{stars()}<strong>5.0</strong> average rating</p>
+<section class="section" id="reviews">
+  <div class="container reviews-split">
+    <div class="reviews-split__media">
+      <img src="assets/img/reviews-vacuum-living.webp" alt="Cleaner vacuuming a modern living room" width="1300" height="867" loading="lazy">
+      <div class="reviews-split__badge"><strong>5.0</strong>{stars()}<span>Average client rating</span></div>
     </div>
-    <div class="reviews">
+    <div>
+      <span class="eyebrow">Client Reviews</span>
+      <h2 class="reviews-split__title">Loved by our clients</h2>
+      <div class="quotes">
 {reviews}
+      </div>
     </div>
   </div>
 </section>

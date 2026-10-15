@@ -45,6 +45,13 @@ M = {
   "addon-interior-windows": (u("1581578731548-c64695cc6952"), 1000),
   "addon-inside-oven": (u("1574269909862-7e1d70bb8078"), 1000),
   "bathroom-modern-clean": (u("1584622650111-993a426fbf0a"), 1000),
+  "hero-cleaner-window": ("tools/pexels/6197124.jpg", 1000),
+  "hero-detail-mirror": ("tools/pexels/4239146.jpg", 900),
+  "about-team": ("tools/pexels/6195125.jpg", 1400),
+  "about-detail-sink": ("tools/pexels/4239130.jpg", 800),
+  "why-team-mopping": ("tools/pexels/6197116.jpg", 900),
+  "why-detail-wiping": ("tools/pexels/4239035.jpg", 900),
+  "reviews-vacuum-living": ("tools/pexels/6195275.jpg", 1300),
 }
 os.makedirs("assets/img", exist_ok=True)
 for name, (src, w) in M.items():
